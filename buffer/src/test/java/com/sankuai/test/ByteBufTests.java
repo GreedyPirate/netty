@@ -103,6 +103,9 @@ public class ByteBufTests {
 
     }
 
+    /**
+     * 派生的buffer和原buffer，2个index互相独立
+     */
     @Test
     public void testDerived() {
         ByteBuf buffer = Unpooled.buffer(32, 64);
@@ -111,20 +114,56 @@ public class ByteBufTests {
         buffer.writeByte(3);
 
         ByteBuf duplicate = buffer.duplicate();
-        duplicate.writeByte(4);
 
-        while (duplicate.isReadable()) {
-            byte b = duplicate.readByte();
-            System.out.println("b = " + b);
-        }
+        System.out.println("buffer readerIndex = " + buffer.readerIndex());
+        print(duplicate);
+        System.out.println("buffer readerIndex = " + buffer.readerIndex());
+
+        System.out.println("buffer writerIndex = " + buffer.writerIndex());
+        duplicate.writeByte(4);
+        System.out.println("buffer writerIndex = " + buffer.writerIndex());
+
+        print(buffer);
+
+        buffer.writeByte(5);
+        print(duplicate);
     }
 
+    @Test
     public void testCopy() {
         ByteBuf buffer = Unpooled.buffer(32, 64);
         buffer.writeByte(1);
         buffer.writeByte(2);
         buffer.writeByte(3);
 
+        ByteBuf copy = buffer.copy();
+        copy.writeByte(4);
 
+        print(buffer);
+        print(copy);
+    }
+
+    @Test
+    public void testToNio() {
+        ByteBuf buffer = Unpooled.buffer(32, 64);
+        buffer.writeByte(1);
+        buffer.writeByte(2);
+        buffer.writeByte(3);
+
+        ByteBuffer nioBuffer = buffer.nioBuffer();
+
+        while (nioBuffer.hasRemaining()) {
+            byte b = nioBuffer.get();
+            System.out.println("b = " + b);
+        }
+    }
+
+
+    private void print(ByteBuf byteBuf) {
+        System.out.println("\n*******start printing*******");
+        while (byteBuf.isReadable()) {
+            byte b = byteBuf.readByte();
+            System.out.println("b = " + b);
+        }
     }
 }
