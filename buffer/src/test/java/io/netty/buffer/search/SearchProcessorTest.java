@@ -31,6 +31,9 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class SearchProcessorTest {
 
+    /**
+     * 三大字符串匹配算法：KMP，Bitap，AC自动机(tire树+KMP)
+     */
     private enum Algorithm {
         KNUTH_MORRIS_PRATT {
             @Override
